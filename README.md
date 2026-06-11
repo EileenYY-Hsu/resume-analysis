@@ -5,3 +5,4 @@ The motivation for this project came from the repetitive and time-consuming natu
 
 Therefore, I built this project to use AI to analyze resume content, structure key information such as education, experience, skills, and job match, and provide a web interface for filtering and management. The goal is to make initial resume screening more efficient and candidate comparison easier.
 ## Preview Screen
+![Screenshot](images/preview_screen.png)
