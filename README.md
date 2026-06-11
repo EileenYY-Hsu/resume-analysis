@@ -5,4 +5,13 @@ The motivation for this project came from the repetitive and time-consuming natu
 
 Therefore, I built this project to use AI to analyze resume content, structure key information such as education, experience, skills, and job match, and provide a web interface for filtering and management. The goal is to make initial resume screening more efficient and candidate comparison easier.
 ## Preview Screen
-![Screenshot](images/preview_screen.png)
+![Screenshot](images/preview_screen_1_chinese.png)
+![Screenshot](images/preview_screen_2_chinese.png)
+## Built With
+This project is built with the following technologies:
+- **Backend**: 
+  - Python: Used for resume reading, AI analysis workflow, database operations, and Flask backend logic.
+  - Flask: Used to build the web application and render the resume management dashboard.
+  - SQLite: Used as the local database for storing analyzed resume data.
+  - OpenAI API: Used to analyze resume content, extract structured candidate information, generate summaries, and calculate job matching scores.
+  - pypdf: Used to read and extract text from PDF resume files.
