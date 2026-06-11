@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Databases
+resume.db
+*.db
+*.sqlite3
+
+# Configurations containing sensitive keys
+config.ini
+.env
+
+# PDF Resumes (avoid uploading personal/sensitive data)
+pdf_resumes/
+output/

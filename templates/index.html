@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>履歷管理系統 - Resume Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="title-group">
+                <h1 style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="mail" style="width: 1.1rem; height: 1.1rem;"></i>
+                    104履歷
+                </h1>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-label">履歷總數：</span>
+                <span class="stat-value">{{ total_resumes }}</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="filter-bar" style="flex-wrap: wrap;">
+                <!-- 狀態篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">狀態</label>
+                    <div class="multi-select-container" id="statusMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('statusList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="statusList">
+                            <div class="checkbox-group-content">
+                                {% for status in screen_statuses %}
+                                <label class="checkbox-item"><input type="checkbox" value="{{ status }}"
+                                        onchange="updateMultiSelectDisplay('statusMultiSelect', 'statusList', false)">
+                                    {{
+                                    status
+                                    }}</label>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 邀約篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">邀約</label>
+                    <div class="multi-select-container" id="inviteMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('inviteList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="inviteList">
+                            <div class="checkbox-group-content">
+                                <label class="checkbox-item"><input type="checkbox" value="是"
+                                        onchange="updateMultiSelectDisplay('inviteMultiSelect', 'inviteList', false)">
+                                    是</label>
+                                <label class="checkbox-item"><input type="checkbox" value="否"
+                                        onchange="updateMultiSelectDisplay('inviteMultiSelect', 'inviteList', false)">
+                                    否</label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 年齡篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">年齡</label>
+                    <div class="multi-select-container" id="ageMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('ageList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="ageList">
+                            <div class="checkbox-group-content">
+                                <label class="checkbox-item"><input type="checkbox" value="20-25"
+                                        onchange="updateMultiSelectDisplay('ageMultiSelect', 'ageList', false)">
+                                    20~25</label>
+                                <label class="checkbox-item"><input type="checkbox" value="26-30"
+                                        onchange="updateMultiSelectDisplay('ageMultiSelect', 'ageList', false)">
+                                    26~30</label>
+                                <label class="checkbox-item"><input type="checkbox" value="31-35"
+                                        onchange="updateMultiSelectDisplay('ageMultiSelect', 'ageList', false)">
+                                    31~35</label>
+                                <label class="checkbox-item"><input type="checkbox" value="36-40"
+                                        onchange="updateMultiSelectDisplay('ageMultiSelect', 'ageList', false)">
+                                    36~40</label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 資訊類工作年資篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">資訊工作年資</label>
+                    <div class="multi-select-container" id="itExpMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('itExpList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="itExpList">
+                            <div class="checkbox-group-content">
+                                <label class="checkbox-item"><input type="checkbox" value="None"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    None</label>
+                                <label class="checkbox-item"><input type="checkbox" value="0-1"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    1年以下</label>
+                                <label class="checkbox-item"><input type="checkbox" value="1-3"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    1~3年</label>
+                                <label class="checkbox-item"><input type="checkbox" value="3-6"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    3~6年</label>
+                                <label class="checkbox-item"><input type="checkbox" value="6-9"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    6~9年</label>
+                                <label class="checkbox-item"><input type="checkbox" value="9-99"
+                                        onchange="updateMultiSelectDisplay('itExpMultiSelect', 'itExpList', false)">
+                                    9年以上</label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最高學歷篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">最高學歷</label>
+                    <div class="multi-select-container" id="eduMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('eduList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="eduList">
+                            <div class="checkbox-group-content">
+                                {% for level in edu_levels %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="{{ level }}"
+                                        onchange="updateMultiSelectDisplay('eduMultiSelect', 'eduList', false)"> {{
+                                    level }}
+                                </label>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 最高學歷學校篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">學校</label>
+                    <div class="multi-select-container" id="schoolMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('schoolList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="schoolList">
+                            <div class="checkbox-group-content">
+                                {% for school in schools %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="{{ school }}" class="school-checkbox"
+                                        onchange="updateMultiSelectDisplay('schoolMultiSelect', 'schoolList', false); updateMajorOptions();">
+                                    {{ school }}
+                                </label>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最高學歷科系篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">科系</label>
+                    <div class="multi-select-container" id="majorMultiSelect" style="width: 85px;">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('majorList')">
+                            <span class="trigger-text">不限</span>
+                            <i data-lucide="chevron-down" style="width:0.8rem"></i>
+                        </div>
+                        <div class="checkbox-list" id="majorList">
+                            <div class="checkbox-group-content">
+                                {% for m in majors %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="{{ m }}"
+                                        onchange="updateMultiSelectDisplay('majorMultiSelect', 'majorList', false)"> {{
+                                    m }}
+                                </label>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="filter-item">
+                    <label class="filter-label">亮點</label>
+                    <div style="display: flex; gap: 0.4rem; align-items: center;">
+                        <input type="text" id="highlightSearch" class="filter-input" placeholder="搜尋..."
+                            style="width: 90px; height: 22px; font-size: 0.7rem; padding: 0 0.25rem;">
+                        <button type="button" class="btn" onclick="applyFilters()">
+                            <i data-lucide="search" style="width: 0.9rem;"></i> 搜尋
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 評分區間篩選 -->
+                <div class="filter-item">
+                    <label class="filter-label">評分:</label>
+                    <div class="dual-range-container">
+                        <div class="range-track" id="rangeTrack"></div>
+                        <input type="range" id="minScore" min="0" max="100" value="0" step="5" oninput="updateScoreUI()"
+                            onchange="applyFilters()">
+                        <input type="range" id="maxScore" min="0" max="100" value="100" step="5"
+                            oninput="updateScoreUI()" onchange="applyFilters()">
+                    </div>
+                    <span id="scoreRangeText" class="range-value"
+                        style="font-size: 0.7rem; min-width: 45px; margin-left: 0.5rem;">0-100</span>
+                </div>
+
+
+
+                <!-- 重置按鈕 -->
+                <div class="filter-item">
+                    <button type="button" class="btn" onclick="resetFilters()">
+                        <i data-lucide="rotate-ccw" style="width: 0.9rem;"></i> 重置
+                    </button>
+                </div>
+            </div> <!-- 關閉 filter-bar -->
+
+            <form id="exportForm" action="/export" method="POST">
+                <div class="toolbar">
+                    <button type="button" class="btn" onclick="selectAll()">
+                        <i data-lucide="check-square" style="width: 0.9rem;"></i> 全選
+                    </button>
+                    <button type="button" class="btn" onclick="clearAll()">
+                        <i data-lucide="square" style="width: 0.9rem;"></i> 全部清除
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i data-lucide="download" style="width: 0.9rem;"></i> 匯出 .xlsx
+                    </button>
+                    <button type="button" class="btn" onclick="bulkMarkAsViewed(true)"
+                        style="background: #fff; color: #4f46e5; border-color: #4f46e5;">
+                        <i data-lucide="eye" style="width: 0.9rem;"></i> 標記已儲存
+                    </button>
+                    <button type="button" class="btn" onclick="bulkMarkAsViewed(false)"
+                        style="background: #fff; color: #64748b; border-color: #cbd5e1;">
+                        <i data-lucide="eye-off" style="width: 0.9rem;"></i> 標記未儲存
+                    </button>
+                    <button type="button" class="btn" onclick="bulkMarkAsRead(true)"
+                        style="background: #fff; color: #4f46e5; border-color: #4f46e5;">
+                        <i data-lucide="mail-open" style="width: 0.9rem;"></i> 標記為已讀
+                    </button>
+                    <button type="button" class="btn" onclick="bulkMarkAsRead(false)"
+                        style="background: #fff; color: #64748b; border-color: #cbd5e1;">
+                        <i data-lucide="mail" style="width: 0.9rem;"></i> 標記為未讀
+                    </button>
+                    <span id="selectedCount"
+                        style="font-size: 0.8rem; color: #64748b; margin-left: 0.5rem; font-family: '微軟正黑體';">
+                        已選 0 筆
+                    </span>
+                    <span id="statusMessage"
+                        style="font-size: 0.8rem; color: #059669; margin-left: 1rem; font-family: '微軟正黑體'; opacity: 0; transition: opacity 0.5s;">
+                    </span>
+
+                    <div class="pagination-toolbar">
+                        <div
+                            style="display: flex; align-items: center; gap: 4px; margin-right: 12px; border-right: 1px solid #e2e8f0; padding-right: 12px;">
+                            <span style="color: #64748b; font-size: 0.8rem;">單頁呈現</span>
+                            <select id="perPageSelect" onchange="applyFilters()"
+                                style="padding: 2px 4px; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 0.8rem; color: #1e293b;">
+                                <option value="100">100</option>
+                                <option value="150">150</option>
+                                <option value="200">200</option>
+                                <option value="250">250</option>
+                            </select>
+                            <span style="color: #64748b; font-size: 0.8rem;">筆</span>
+                        </div>
+                        <button type="button" class="btn-icon" onclick="jumpToPage('1')" title="最前頁" {% if page==1
+                            %}disabled{% endif %}>
+                            <i data-lucide="chevrons-left" style="width: 1rem;"></i>
+                        </button>
+                        <button type="button" class="btn-icon" onclick="jumpToPage('{{ page - 1 }}')" title="上一頁" {% if
+                            page==1 %}disabled{% endif %}>
+                            <i data-lucide="chevron-left" style="width: 1rem;"></i>
+                        </button>
+
+                        <div style="display: flex; align-items: center; gap: 4px; margin: 0 4px;">
+                            <span style="color: #64748b;">第</span>
+                            <select onchange="jumpToPage(this.value)">
+                                {% for p in range(1, total_pages + 1) %}
+                                <option value="{{ p }}" {% if p==page %}selected{% endif %}>{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                            <span style="color: #64748b;">/ {{ total_pages }} 頁</span>
+                        </div>
+
+                        <button type="button" class="btn-icon" onclick="jumpToPage('{{ page + 1 }}')" title="下一頁" {% if
+                            page==total_pages or total_pages==0 %}disabled{% endif %}>
+                            <i data-lucide="chevron-right" style="width: 1rem;"></i>
+                        </button>
+                        <button type="button" class="btn-icon" onclick="jumpToPage('{{ total_pages }}')" title="最後頁" {%
+                            if page==total_pages or total_pages==0 %}disabled{% endif %}>
+                            <i data-lucide="chevrons-right" style="width: 1rem;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 20px;"><input type="checkbox" id="masterCheckbox"
+                                            onclick="toggleAll(this)">
+                                    </th>
+                                    <th style="width: 55px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">狀態</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-1-1"
+                                                    onclick="applySort('is_screened', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-1-2"
+                                                    onclick="applySort('is_screened', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 55px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">邀約</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-18-1"
+                                                    onclick="applySort('interview_state', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-18-2"
+                                                    onclick="applySort('interview_state', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 45px;">姓名</th>
+                                    <th style="width:95px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">代碼</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-3-1"
+                                                    onclick="applySort('code', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-3-2"
+                                                    onclick="applySort('code', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 50px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">年齡</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-4-1" onclick="applySort('age', 'asc')"
+                                                    title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-4-2" onclick="applySort('age', 'desc')"
+                                                    title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 60px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">總年資</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-5-1"
+                                                    onclick="applySort('total_work_years', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-5-2"
+                                                    onclick="applySort('total_work_years', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 70px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">資訊年資</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-6-1"
+                                                    onclick="applySort('it_work_years', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-6-2"
+                                                    onclick="applySort('it_work_years', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 100px;">工作經歷</th>
+                                    <th style="width: 70px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">最高學歷</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-8-1"
+                                                    onclick="applySort('highest_edu_level', 'asc')" title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-8-2"
+                                                    onclick="applySort('highest_edu_level', 'desc')" title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 80px;">學校</th>
+                                    <th style="width: 80px;">科系</th>
+                                    <th style="width: 100px;">專長</th>
+                                    <th style="width: 100px;">亮點</th>
+
+                                    <th style="width: 50px; user-select: none;">
+                                        <div style="display: flex; align-items: center; gap: 2px;">
+                                            <span onclick="applySort(null)" style="cursor: pointer;"
+                                                title="點擊名稱恢復預設排序">總分</span>
+                                            <div class="sort-controls">
+                                                <div class="sort-btn sort-btn-14-1" onclick="applySort('score', 'asc')"
+                                                    title="遞增">
+                                                    <i data-lucide="chevron-up"></i>
+                                                </div>
+                                                <div class="sort-btn sort-btn-14-2" onclick="applySort('score', 'desc')"
+                                                    title="遞減">
+                                                    <i data-lucide="chevron-down"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th style="width: 100px;">理由</th>
+                                    <th style="width: 80px;">備註</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for resume in resumes %}
+                                <tr onclick="openDrawer(this)" data-resume='{{ resume|tojson }}'
+                                    data-age="{{ resume['age'] or '0' }}"
+                                    data-school="{{ (resume['highest_edu_school'] or '')|trim }}"
+                                    data-school2="{{ (resume['second_edu_school'] or '')|trim }}"
+                                    data-major="{{ (resume['highest_edu_major'] or '')|trim }}"
+                                    data-major2="{{ (resume['second_edu_major'] or '')|trim }}"
+                                    class="{% if resume['is_screened'] and resume['is_screened'] != '未儲存' %}is-viewed{% endif %} {% if resume['review_status'] == 1 %}is-read{% endif %}"
+                                    style="cursor: pointer;">
+                                    <td onclick="event.stopPropagation()"><input type="checkbox" name="selected_resumes"
+                                            value="{{ resume['code'] }}">
+                                    </td>
+                                    <td style="text-align: center;">
+                                        {% if resume['is_screened'] and resume['is_screened'] != '未儲存' %}
+                                        <span class="status-tag viewed" id="status-{{ resume['code'] }}">{{
+                                            resume['is_screened'] }}</span>
+                                        {% else %}
+                                        <span class="status-tag" id="status-{{ resume['code'] }}">未儲存</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center;" onclick="event.stopPropagation();">
+                                        <input type="checkbox" id="invite-cb-{{ resume.code }}" {% if resume['interview_state'] == '是' %}checked{% endif %} style="cursor: pointer;" onchange="toggleTableInvite('{{ resume.code }}', this)">
+                                    </td>
+                                    <td style="font-weight: 600; min-width: 80px;">{{ resume['name'] }}</td>
+                                    <td style="color: var(--text-muted); font-size: 0.75rem; white-space: nowrap;">{{
+                                        resume['code'] }}</td>
+                                    <td style="white-space: nowrap;">{{ resume['age'] }}</td>
+                                    <td style="white-space: nowrap;">{{ resume['total_work_years'] }}</td>
+                                    <td style="white-space: nowrap;">{{ resume['it_work_years'] }}</td>
+                                    <td>
+                                        <div class="text-truncate" title="{{ resume['work_experience'] }}">{{
+                                            resume['work_experience'] }}</div>
+                                    </td>
+                                    <td style="white-space: nowrap;">{{ resume['highest_edu_level'] }}</td>
+                                    <td style="white-space: nowrap;">{{ resume['highest_edu_school'] }}</td>
+                                    <td style="white-space: nowrap;">{{ resume['highest_edu_major'] }}</td>
+                                    <td>
+                                        <div class="text-truncate" title="{{ resume['tech_skills'] }}">{{
+                                            resume['tech_skills'] }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="text-truncate" title="{{ resume['key_highlights'] }}">{{
+                                            resume['key_highlights'] }}</div>
+                                    </td>
+                                    
+                                    <td><span class="badge badge-score">{{ resume['score'] }}</span></td>
+                                    <td>
+                                        <div class="text-truncate" title="{{ resume['reason'] }}">{{ resume['reason'] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-truncate" title="{{ resume['notes'] }}">{{ resume['notes'] }}
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Slide-out Detail Panel -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="detailDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <i data-lucide="user-check"></i>
+                <span id="drawerName">履歷詳情</span>
+                <span id="drawerScore" class="badge badge-score"></span>
+                <span id="drawerLinkContainer"></span>
+            </div>
+            <div class="drawer-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn" id="drawerInviteBtn"
+                    style="height: 28px; padding: 0 0.8rem; font-size: 0.75rem; background: #64748b; border: 1px solid #64748b; color: white; border-radius: 6px; cursor: pointer;">
+                    <i data-lucide="user-minus" style="width: 0.9rem; height: 0.9rem;"></i> <span id="drawerInviteText">未標記邀約</span>
+                </button>
+                <button class="btn" id="drawerSaveBtn"
+                    style="height: 28px; padding: 0 0.8rem; font-size: 0.75rem; background: #64748b; border: 1px solid #64748b; color: white; border-radius: 6px; cursor: pointer;">
+                    <i data-lucide="save" style="width: 0.9rem; height: 0.9rem;"></i> 標記為儲存
+                </button>
+                <button class="drawer-btn" id="maximizeBtn" onclick="toggleMaximize()" title="切換寬度">
+                    <i data-lucide="maximize-2" style="width: 1.1rem; height: 1.1rem;"></i>
+                </button>
+                <button class="drawer-close" onclick="closeDrawer()" title="關閉">
+                    <i data-lucide="x" style="width: 1.1rem; height: 1.1rem;"></i>
+                </button>
+            </div>
+        </div>
+        <div class="drawer-content" id="drawerContent">
+            <!-- 動態插入內容 -->
+        </div>
+    </div>
+
+
+    <script id="selected-filters-data" type="application/json">
+        {{ selected_filters|tojson }}
+    </script>
+    <script id="school-major-map-data" type="application/json">
+        {{ school_major_map|tojson }}
+    </script>
+    <script>
+        // 初始化 Lucide 圖標
+        lucide.createIcons();
+
+        // --- 全域選擇狀態 (跨分頁持久化) ---
+        let selectedResumeIds = new Set(JSON.parse(sessionStorage.getItem('selectedResumeIds') || '[]'));
+
+        function saveSelections() {
+            sessionStorage.setItem('selectedResumeIds', JSON.stringify([...selectedResumeIds]));
+        }
+
+        function syncCheckboxesWithGlobal() {
+            const checkboxes = document.getElementsByName('selected_resumes');
+            checkboxes.forEach(cb => {
+                cb.checked = selectedResumeIds.has(cb.value);
+            });
+            updateSelectedCount();
+            updateMasterCheckboxState();
+        }
+
+        function updateMasterCheckboxState() {
+            const master = document.getElementById('masterCheckbox');
+            if (!master) return;
+            const checkboxes = Array.from(document.getElementsByName('selected_resumes'));
+            if (checkboxes.length === 0) {
+                master.checked = false;
+                return;
+            }
+            master.checked = checkboxes.every(cb => cb.checked);
+        }
+
+        // --- 排序邏輯 (伺服器端) ---
+        function applySort(col, order) {
+            const params = new URLSearchParams(window.location.search);
+            if (col === null) {
+                // 恢復預設排序：刪除排序參數
+                params.delete('sort_by');
+                params.delete('order');
+            } else {
+                params.set('sort_by', col);
+                params.set('order', order);
+            }
+            params.set('page', '1'); // 排序變動時回到第一頁
+            fetchDataAndRender('?' + params.toString());
+        }
+
+        function highlightSortButtons() {
+            const params = new URLSearchParams(window.location.search);
+            const sortBy = params.get('sort_by');
+            const order = params.get('order');
+
+            if (sortBy && order) {
+                // 找出對應的按鈕類名。我們需要一個從 DB 欄位到 index.html index 的映射
+                const mapping = {
+                    'is_screened': 1, 'interview_state': 18, 'code': 3, 'age': 4,
+                    'total_work_years': 5, 'it_work_years': 6,
+                    'highest_edu_level': 8,
+                    'score': 14
+                };
+                const colIdx = mapping[sortBy];
+                const orderIdx = order === 'asc' ? 1 : 2;
+                if (colIdx) {
+                    const selector = `.sort-btn-${colIdx}-${orderIdx}`;
+                    const btn = document.querySelector(selector);
+                    if (btn) btn.classList.add('active');
+                }
+            }
+        }
+
+        function updateScoreUI() {
+            const minInput = document.getElementById('minScore');
+            const maxInput = document.getElementById('maxScore');
+            const rangeText = document.getElementById('scoreRangeText');
+            const track = document.getElementById('rangeTrack');
+
+            let minVal = parseInt(minInput.value);
+            let maxVal = parseInt(maxInput.value);
+
+            if (minVal > maxVal) {
+                // 如果是 minInput 被動到，就推開 maxInput；如果是 maxInput 被動到，就推開 minInput
+                // 或者簡單禁止交叉
+                const activeId = document.activeElement ? document.activeElement.id : '';
+                if (activeId === 'minScore') minInput.value = maxVal;
+                else maxInput.value = minVal;
+                minVal = parseInt(minInput.value);
+                maxVal = parseInt(maxInput.value);
+            }
+
+            rangeText.textContent = `${minVal} - ${maxVal}`;
+            const percent1 = (minVal / 100) * 100;
+            const percent2 = (maxVal / 100) * 100;
+            track.style.background = `linear-gradient(to right, #e2e8f0 ${percent1}%, #4f46e5 ${percent1}%, #4f46e5 ${percent2}%, #e2e8f0 ${percent2}%)`;
+        }
+
+        function handleRangeInput() {
+            updateScoreUI();
+        }
+
+        // --- 多選下拉選單選單邏輯 ---
+        function toggleMultiSelect(listId) {
+            const list = document.getElementById(listId);
+            const isCurrentlyOpen = list.classList.contains('show');
+
+            // 關閉其他已開啟的清單
+            document.querySelectorAll('.checkbox-list').forEach(l => {
+                if (l.id !== listId && l.classList.contains('show')) {
+                    l.classList.remove('show');
+                }
+            });
+
+            if (isCurrentlyOpen) {
+                list.classList.remove('show');
+            } else {
+                list.classList.add('show');
+            }
+        }
+
+        // 點擊空白處關閉清單
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.checkbox-list').forEach(list => {
+                    list.classList.remove('show');
+                });
+            }
+        });
+
+        function updateMultiSelectDisplay(containerId, listId, triggerReload = false) {
+            const container = document.getElementById(containerId);
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            const triggerText = container.querySelector('.trigger-text');
+
+            if (checkboxes.length === 0) {
+                triggerText.textContent = "不限";
+            } else if (checkboxes.length <= 2) {
+                triggerText.textContent = Array.from(checkboxes).map(cb => cb.parentNode.textContent.trim()).join(', ');
+            } else {
+                triggerText.textContent = `已選 ${checkboxes.length} 項`;
+            }
+
+            // 每次勾選都自動套用最新篩選條件 (Ajax 不刷新頁面)
+            applyFilters();
+        }
+
+        function getSelectedValues(listId) {
+            const list = document.getElementById(listId);
+            if (!list) return [];
+            return Array.from(list.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+        }
+
+        async function applyFilters() {
+            const currentParams = new URLSearchParams(window.location.search);
+            const params = new URLSearchParams();
+
+            const mapping = {
+                'statusList': 'status',
+                'inviteList': 'invite',
+                'ageList': 'age',
+                'itExpList': 'it_exp',
+                'eduList': 'edu',
+                'schoolList': 'school',
+                'majorList': 'major'
+            };
+
+            for (let listId in mapping) {
+                const values = getSelectedValues(listId);
+                values.forEach(v => params.append(mapping[listId], v));
+            }
+
+            const h = document.getElementById('highlightSearch').value;
+            if (h) params.set('highlight', h);
+
+            const minS = document.getElementById('minScore').value;
+            const maxS = document.getElementById('maxScore').value;
+            if (minS != 0 || maxS != 100) {
+                params.set('min_score', minS);
+                params.set('max_score', maxS);
+            }
+
+
+
+            // 保持排序參數
+            if (currentParams.has('sort_by')) params.set('sort_by', currentParams.get('sort_by'));
+            if (currentParams.has('order')) params.set('order', currentParams.get('order'));
+
+            // 每頁筆數
+            const perPage = document.getElementById('perPageSelect').value;
+            params.set('per_page', perPage);
+
+            params.set('page', '1');
+            await fetchDataAndRender('?' + params.toString());
+        }
+
+        async function fetchDataAndRender(queryString) {
+            try {
+                const response = await fetch('/' + queryString);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const html = await response.text();
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // 更換 Table Body
+                const newTbody = doc.querySelector('table tbody');
+                if (newTbody) {
+                    document.querySelector('table tbody').innerHTML = newTbody.innerHTML;
+                }
+
+                // 更換分頁工具列
+                const newPagination = doc.querySelector('.pagination-toolbar');
+                if (newPagination) {
+                    document.querySelector('.pagination-toolbar').innerHTML = newPagination.innerHTML;
+                }
+
+                // 更換履歷總數
+                const newStat = doc.querySelector('.stat-value');
+                if (newStat) {
+                    document.querySelector('.stat-value').textContent = newStat.textContent;
+                }
+
+                window.history.pushState({}, '', '/' + queryString);
+
+                // 同步勾選狀態與排序按鈕高亮
+                syncCheckboxesWithGlobal();
+                document.querySelectorAll('.sort-btn.active').forEach(btn => btn.classList.remove('active'));
+                highlightSortButtons();
+
+                // 重新渲染 Lucide 圖標 (對於分頁按鈕)
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
+                window.location.href = '/' + queryString; // 失敗則退回傳統刷新
+            }
+        }
+
+        function jumpToPage(targetPage) {
+            const params = new URLSearchParams(window.location.search);
+            // 保持排序與每頁筆數參數
+            if (!params.has('per_page')) {
+                const perPage = document.getElementById('perPageSelect').value;
+                params.set('per_page', perPage);
+            }
+            params.set('page', targetPage);
+            fetchDataAndRender('?' + params.toString());
+        }
+
+        function updateMajorOptions() {
+            const selectedSchools = getSelectedValues('schoolList');
+            const majorItems = document.querySelectorAll('#majorList .checkbox-item');
+            const schoolMajorMap = JSON.parse(document.getElementById('school-major-map-data').textContent);
+
+            if (selectedSchools.length === 0) {
+                // 沒選學校時，呈現所有科系
+                majorItems.forEach(item => item.style.display = '');
+                return;
+            }
+
+            // 根據傳入的對照表找出所有可選科系
+            const availableMajors = new Set();
+            selectedSchools.forEach(school => {
+                if (schoolMajorMap[school]) {
+                    schoolMajorMap[school].forEach(m => availableMajors.add(m));
+                }
+            });
+
+            // 更新科系選單的顯示狀態
+            majorItems.forEach(item => {
+                const majorName = item.querySelector('input').value;
+                if (availableMajors.has(majorName)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                    // 如果該科系被隱藏了且正被勾選中，取消勾選
+                    const cb = item.querySelector('input');
+                    if (cb.checked) {
+                        cb.checked = false;
+                        updateMultiSelectDisplay('majorMultiSelect', 'majorList');
+                    }
+                }
+            });
+        }
+
+        function resetFilters() {
+            window.location.href = '/';
+        }
+
+        // 初始化篩選器狀態 (從伺服器端傳回的 selected_filters)
+        function initFilters() {
+            const filters = JSON.parse(document.getElementById('selected-filters-data').textContent);
+            const map = {
+                'status': 'statusList',
+                'invite': 'inviteList',
+                'age': 'ageList',
+                'it_exp': 'itExpList',
+                'edu': 'eduList',
+                'school': 'schoolList',
+                'major': 'majorList'
+            };
+
+            for (let key in map) {
+                if (filters[key] && Array.isArray(filters[key])) {
+                    const list = document.getElementById(map[key]);
+                    if (list) {
+                        filters[key].forEach(val => {
+                            const cb = list.querySelector(`input[value="${CSS.escape(val)}"]`) ||
+                                Array.from(list.querySelectorAll('input')).find(i => i.value === val);
+                            if (cb) cb.checked = true;
+                        });
+                        const containerId = map[key].replace('List', 'MultiSelect');
+                        if (document.getElementById(containerId)) {
+                            updateMultiSelectDisplay(containerId, map[key], false);
+                        }
+                    }
+                }
+            }
+
+            if (filters.highlight) document.getElementById('highlightSearch').value = filters.highlight;
+            if (filters.min_score !== undefined) document.getElementById('minScore').value = filters.min_score;
+            if (filters.max_score !== undefined) document.getElementById('maxScore').value = filters.max_score;
+
+            if (filters.per_page) document.getElementById('perPageSelect').value = filters.per_page;
+
+            updateScoreUI();
+            updateMajorOptions();
+        }
+
+        // 頁面載入後初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            // 提供不刷新上一頁的體驗補強
+            window.addEventListener('popstate', function () {
+                window.location.reload();
+            });
+            initFilters();
+            syncCheckboxesWithGlobal();
+            highlightSortButtons();
+
+            // 監聽搜尋欄 Enter 鍵
+            document.getElementById('highlightSearch').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyFilters();
+                }
+            });
+
+            // 匯出表單提交前，動態注入所有選取的 ID
+            const exportForm = document.getElementById('exportForm');
+            if (exportForm) {
+                exportForm.addEventListener('submit', function (e) {
+                    if (selectedResumeIds.size === 0) {
+                        e.preventDefault();
+                        showStatusMessage('請先選取履歷！', '#dc2626');
+                        return;
+                    }
+                    this.querySelectorAll('.dynamic-id').forEach(el => el.remove());
+                    selectedResumeIds.forEach(id => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden'; input.name = 'selected_resumes';
+                        input.value = id; input.className = 'dynamic-id';
+                        this.appendChild(input);
+                    });
+
+                    // 匯出後延遲清除勾選，確保瀏覽器已處理表單提交
+                    setTimeout(() => {
+                        clearAll();
+                    }, 500);
+                });
+            }
+        });
+
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = `已選 ${selectedResumeIds.size} 筆`;
+        }
+
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.name === 'selected_resumes') {
+                if (e.target.checked) selectedResumeIds.add(e.target.value);
+                else selectedResumeIds.delete(e.target.value);
+                saveSelections();
+                updateSelectedCount();
+                updateMasterCheckboxState();
+            }
+        });
+
+        function toggleAll(master) {
+            const checkboxes = document.getElementsByName('selected_resumes');
+            checkboxes.forEach(cb => {
+                cb.checked = master.checked;
+                if (master.checked) selectedResumeIds.add(cb.value);
+                else selectedResumeIds.delete(cb.value);
+            });
+            saveSelections();
+            updateSelectedCount();
+        }
+
+        function selectAll() {
+            const master = document.getElementById('masterCheckbox');
+            master.checked = true;
+            toggleAll(master);
+        }
+
+        function clearAll() {
+            selectedResumeIds.clear();
+            const checkboxes = document.getElementsByName('selected_resumes');
+            checkboxes.forEach(cb => cb.checked = false);
+            const master = document.getElementById('masterCheckbox');
+            if (master) master.checked = false;
+            saveSelections();
+            updateSelectedCount();
+        }
+
+        // --- 專業能力評分顯示優化 ---
+        function extractScore(str) {
+            if (!str || typeof str !== 'string') return 0;
+            const match = str.match(/(\d+)/); // 提取字串中的第一個數字
+            return match ? parseInt(match[0]) : 0;
+        }
+
+        function formatEval(label, str) {
+            if (!str || str === '-' || str === 'None') {
+                return `
+                    <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.4rem;">
+                        <span style="font-weight: 800; color: #1e293b; font-size: 0.85rem;">${label}</span>
+                        <span style="color: #94a3b8; font-style: italic; font-size: 0.85rem;">未評核</span>
+                    </div>`;
+            }
+
+            // 預期格式: "能力名稱: X分，理由內容"
+            const parts = str.split(/[，,]/);
+            let titlePart = parts[0].trim();
+            const reasonPart = parts.length > 1 ? parts.slice(1).join('，').trim() : '';
+
+            // 擷取分數
+            let scoreOnly = titlePart;
+            if (titlePart.includes('：')) scoreOnly = titlePart.split('：')[1].trim();
+            else if (titlePart.includes(':')) scoreOnly = titlePart.split(':')[1].trim();
+            else if (!titlePart.includes(label)) scoreOnly = titlePart;
+
+            let html = `
+                <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.4rem;">
+                    <span style="font-weight: 800; color: #1e293b; font-size: 0.85rem;">${label}</span>
+                    <span style="font-weight: 800; color: #4f46e5; font-size: 1rem; display: flex; align-items: baseline; gap: 2px;">
+                        ${scoreOnly}
+                        <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">/ 10</span>
+                    </span>
+                </div>`;
+            if (reasonPart) {
+                // 換行並說明理由
+                html += `<div class="detail-value" style="margin-top: 0.5rem; white-space: pre-wrap;">${reasonPart}</div>`;
+            }
+            return html;
+        }
+
+        // --- Drawer Logic ---
+        function openDrawer(row) {
+            const resume = JSON.parse(row.getAttribute('data-resume'));
+            const saveBtn = document.getElementById('drawerSaveBtn');
+            const inviteBtn = document.getElementById('drawerInviteBtn');
+
+            const updateInviteBtnState = (status) => {
+                const isInvited = (status === '是');
+                if (isInvited) {
+                    inviteBtn.innerHTML = `<i data-lucide="user-plus" style="width: 0.9rem; height: 0.9rem;"></i> 已標記邀約`;
+                    inviteBtn.style.background = '#059669';
+                    inviteBtn.style.borderColor = '#059669';
+                } else {
+                    inviteBtn.innerHTML = `<i data-lucide="user-minus" style="width: 0.9rem; height: 0.9rem;"></i> 未標記邀約`;
+                    inviteBtn.style.background = '#64748b';
+                    inviteBtn.style.borderColor = '#64748b';
+                }
+                lucide.createIcons();
+            }
+            updateInviteBtnState(resume.interview_state);
+
+            inviteBtn.onclick = async (e) => {
+                e.stopPropagation();
+                const nextStatus = (resume.interview_state === '是') ? '否' : '是';
+                
+                // Update table UI
+                const inviteCb = document.getElementById(`invite-cb-${resume.code}`);
+                if (inviteCb) {
+                    inviteCb.checked = (nextStatus === '是');
+                }
+
+                try {
+                    const response = await fetch('/mark_invited', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: resume.code, status: nextStatus })
+                    });
+                    if (response.ok) {
+                        resume.interview_state = nextStatus;
+                        updateInviteBtnState(nextStatus);
+                        row.setAttribute('data-resume', JSON.stringify(resume));
+                    }
+                } catch (error) {
+                    console.error('Toggle invite failed:', error);
+                }
+            };
+
+            const updateSaveBtnState = (status) => {
+                if (status && status !== '未儲存') {
+                    let displayStatus = status;
+                    if (status === '已儲存') {
+                        const today = new Date();
+                        const yyyy = today.getFullYear();
+                        const mm = String(today.getMonth() + 1).padStart(2, '0');
+                        const dd = String(today.getDate()).padStart(2, '0');
+                        displayStatus = `${yyyy}${mm}${dd}`;
+                    }
+                    saveBtn.innerHTML = `<i data-lucide="check" style="width: 0.9rem; height: 0.9rem;"></i> ${displayStatus} 已儲存`;
+                    saveBtn.style.background = '#4f46e5';
+                    saveBtn.style.borderColor = '#4f46e5';
+                } else {
+                    saveBtn.innerHTML = '<i data-lucide="save" style="width: 0.9rem; height: 0.9rem;"></i> 標記為儲存';
+                    saveBtn.style.background = '#64748b';
+                    saveBtn.style.borderColor = '#64748b';
+                }
+                saveBtn.style.cursor = 'pointer';
+                lucide.createIcons();
+            };
+
+            updateSaveBtnState(resume.is_screened);
+
+            saveBtn.onclick = async (e) => {
+                e.stopPropagation();
+                const isCurrentlySaved = resume.is_screened && resume.is_screened !== '未儲存';
+                const nextStatus = isCurrentlySaved ? '未儲存' : '已儲存';
+
+                updateStatusLabel(resume.code, nextStatus);
+
+                try {
+                    const response = await fetch('/mark_viewed', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: [resume.code], status: nextStatus })
+                    });
+
+                    if (response.ok) {
+                        // 如果成功更新，獲取伺服器可能的轉換後名稱 (如 YYYYMMDD)
+                        // 但目前伺服器只回傳 success，我們本地計算
+                        let finalStatus = nextStatus;
+                        if (nextStatus === '已儲存') {
+                            const today = new Date();
+                            finalStatus = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+                        }
+
+                        resume.is_screened = finalStatus;
+                        updateSaveBtnState(finalStatus);
+                        row.setAttribute('data-resume', JSON.stringify(resume));
+                    }
+                } catch (error) {
+                    console.error('Toggle save failed:', error);
+                }
+            };
+
+            // 標記為已讀 (視覺與資料庫)
+            if (!row.classList.contains('is-read')) {
+                row.classList.add('is-read');
+                fetch('/mark_read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: resume.code })
+                }).catch(err => console.error('Mark read failed:', err));
+            }
+
+            const content = document.getElementById('drawerContent');
+            const overlay = document.getElementById('drawerOverlay');
+            const drawer = document.getElementById('detailDrawer');
+
+            document.getElementById('drawerName').textContent = resume.name;
+            document.getElementById('drawerScore').textContent = `${resume.score} 分`;
+
+            const linkContainer = document.getElementById('drawerLinkContainer');
+            linkContainer.innerHTML = '';
+
+            content.innerHTML = `
+                <div class="drawer-content-wrapper" style="display: flex; flex-direction: column; gap: 1.5rem; padding-bottom: 2rem;">
+                    
+                    <!-- 頁籤切換 -->
+                    <div style="display: flex; gap: 1rem; border-bottom: 2px solid #e2e8f0; margin-bottom: -0.5rem;">
+                        <button id="btnTabOverview" onclick="document.getElementById('tab-overview').style.display='flex'; document.getElementById('tab-resume').style.display='none'; document.getElementById('tab-ai').style.display='none'; this.style.color='#4f46e5'; this.style.borderBottomColor='#4f46e5'; document.getElementById('btnTabResume').style.color='#64748b'; document.getElementById('btnTabResume').style.borderBottomColor='transparent'; document.getElementById('btnTabAI').style.color='#64748b'; document.getElementById('btnTabAI').style.borderBottomColor='transparent';" style="background: none; border: none; font-size: 1.05rem; font-weight: 700; color: #4f46e5; padding: 0.5rem 0.5rem; border-bottom: 3px solid #4f46e5; cursor: pointer; transition: all 0.2s;">基本資訊</button>
+                        <button id="btnTabResume" onclick="document.getElementById('tab-overview').style.display='none'; document.getElementById('tab-resume').style.display='flex'; document.getElementById('tab-ai').style.display='none'; this.style.color='#4f46e5'; this.style.borderBottomColor='#4f46e5'; document.getElementById('btnTabOverview').style.color='#64748b'; document.getElementById('btnTabOverview').style.borderBottomColor='transparent'; document.getElementById('btnTabAI').style.color='#64748b'; document.getElementById('btnTabAI').style.borderBottomColor='transparent';" style="background: none; border: none; font-size: 1.05rem; font-weight: 700; color: #64748b; padding: 0.5rem 0.5rem; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s;">履歷內容</button>
+                        <button id="btnTabAI" onclick="document.getElementById('tab-overview').style.display='none'; document.getElementById('tab-resume').style.display='none'; document.getElementById('tab-ai').style.display='flex'; this.style.color='#4f46e5'; this.style.borderBottomColor='#4f46e5'; document.getElementById('btnTabOverview').style.color='#64748b'; document.getElementById('btnTabOverview').style.borderBottomColor='transparent'; document.getElementById('btnTabResume').style.color='#64748b'; document.getElementById('btnTabResume').style.borderBottomColor='transparent';" style="background: none; border: none; font-size: 1.05rem; font-weight: 700; color: #64748b; padding: 0.5rem 0.5rem; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s;">AI 評等</button>
+                    </div>
+
+                    <!-- Tab 1: 基本資訊 -->
+                    <div id="tab-overview" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- 基本資訊區塊 -->
+                        <div class="info-group">
+                            <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.8rem;">
+                                <i data-lucide="user" style="width: 1rem; height: 1rem;"></i>
+                                基本資訊詳情
+                            </div>
+                        
+                        <!-- 人員基本屬性卡片 -->
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                            
+                            <!-- 第一排：基本狀態 -->
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; border-bottom: 1px dashed #cbd5e1; padding-bottom: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <div class="detail-label">姓名</div>
+                                    <div class="detail-value" style="font-size: 1.15rem; font-weight: 800; color: #1e293b;">${resume.name}</div>
+                                </div>
+                                <div>
+                                    <div class="detail-label">年齡</div>
+                                    <div class="detail-value" style="color: #334155;">${resume.age} <span style="font-size: 0.8rem; color: #94a3b8;">歲</span></div>
+                                </div>
+                                <div>
+                                    <div class="detail-label">代碼</div>
+                                    <div class="detail-value" style="color: #475569;">${resume.code}</div>
+                                </div>
+                            </div>
+
+                            <!-- 第二排：工作年資 -->
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-bottom: 1px dashed #cbd5e1; padding-bottom: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <div class="detail-label">總工作年資</div>
+                                    <div class="detail-value" style="color: #334155;">${resume.total_work_years}</div>
+                                </div>
+                                <div>
+                                    <div class="detail-label">資訊類工作年資</div>
+                                    <div class="detail-value" style="color: #334155;">${resume.it_work_years}</div>
+                                </div>
+                            </div>
+
+                            <!-- 第三排：學歷歷程 -->
+                            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: flex-start; gap: 1rem;">
+                                    <div>
+                                        <div class="detail-label">最高學歷</div>
+                                        <div class="detail-value" style="line-height: 1.5;">
+                                            <span style="background: #eef2ff; color: #4f46e5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-right: 0.4rem;">${resume.highest_edu_level}</span> 
+                                            <span style="font-weight: 800; color: #1e293b;">${resume.highest_edu_school}</span> 
+                                            <span style="color: #64748b;">- ${resume.highest_edu_major}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">最高學歷期間</div>
+                                        <div class="detail-value" style="color: #64748b; font-size: 0.9rem; font-weight: 500;">${resume.highest_edu_period || '-'}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="detail-label">次高學歷</div>
+                                    <div class="detail-value" style="color: #64748b; font-size: 0.9rem;">${resume.second_edu_school || '-'} ${resume.second_edu_major ? `- ${resume.second_edu_major}` : ''}</div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- 附加資訊與最後寫入時間 (原置底) -->
+                        <div style="margin-top: 0.5rem; padding-top: 1rem; border-top: 1px dashed #e2e8f0;">
+                            <!-- 面板底部 Meta 資訊bar -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                
+                                <!-- 備註 -->
+                                <div style="color: #64748b; font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <i data-lucide="message-square" style="width: 1rem; height: 1rem; color: #6366f1; margin-top: 0.15rem;"></i>
+                                    <span style="font-weight: 600; color: #475569; min-width: max-content;">備註</span> 
+                                    <span style="margin-left: 0.25rem; white-space: pre-wrap; line-height: 1.5;">${resume.notes || '無'}</span>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+                    </div> <!-- End of Tab 1: tab-overview -->
+
+                    <!-- Tab 3: AI 評等 -->
+                    <div id="tab-ai" style="display: none; flex-direction: column; gap: 1.5rem;">
+                    <!-- AI 評等區塊 -->
+                    <div class="info-group">
+                        
+                        <div class="detail-section" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                            <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem;">
+                                <i data-lucide="bar-chart-3" style="width: 1rem; height: 1rem;"></i>
+                                專業能力評分詳情
+                            </div>
+                            <div class="detail-grid" style="margin-top: 0.5rem;">
+                                <div class="scrollable-content" style="margin-top: 0;">
+                                    ${formatEval('資料工程', resume.score_data_eng)}
+                                </div>
+                                <div class="scrollable-content" style="margin-top: 0;">
+                                    ${formatEval('資料庫與 SQL', resume.score_db_sql)}
+                                </div>
+                                <div class="scrollable-content" style="margin-top: 0;">
+                                    ${formatEval('AI 應用', resume.score_ai_app)}
+                                </div>
+                                <div class="scrollable-content" style="margin-top: 0;">
+                                    ${formatEval('RAG 與系統整合', resume.score_rag_sys)}
+                                </div>
+                                <div class="scrollable-content" style="margin-top: 0;">
+                                    ${formatEval('平台部署與工程能力', resume.score_deployment)}
+                                </div>
+                                <div class="scrollable-content" style="margin-top: 0; display: flex; flex-direction: column;">
+                                    <div class="detail-label" style="border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.4rem;">
+                                        <span style="font-weight: 800; color: #1e293b; font-size: 0.85rem;">專業能力總計</span>
+                                    </div>
+                                    <div class="detail-value" style="margin-top: 0.5rem; flex: 1; display: flex; justify-content: center; align-items: center;">
+                                        <span style="font-weight: 800; color: #4f46e5; font-size: 2rem; display: flex; align-items: baseline; gap: 4px;">
+                                            ${extractScore(resume.score_data_eng) +
+                extractScore(resume.score_db_sql) +
+                extractScore(resume.score_ai_app) +
+                extractScore(resume.score_rag_sys) +
+                extractScore(resume.score_deployment)} 分
+                                            <span style="font-size: 1rem; color: #94a3b8; font-weight: 600;">/ 50</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scrollable-content" style="margin-top: 1.5rem;">
+                                <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.4rem;">
+                                    <span style="font-weight: 800; color: #1e293b; font-size: 0.85rem;">綜合評核分數及理由</span>
+                                    <span style="font-weight: 800; color: #4f46e5; font-size: 1rem; display: flex; align-items: baseline; gap: 2px;">
+                                        ${resume.score} 分
+                                        <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">/ 100</span>
+                                    </span>
+                                </div>
+                                <div class="detail-value" style="margin-top: 0.5rem; white-space: pre-wrap;">${resume.reason}</div>
+                            </div>
+                        </div>
+                    </div>
+                    </div> <!-- End of Tab 3: tab-ai -->
+
+                    <!-- Tab 2: 履歷內容 -->
+                    <div id="tab-resume" style="display: none; flex-direction: column; gap: 1.5rem;">
+                        <div class="info-group">
+                            <div class="detail-section">
+                                <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <i data-lucide="sparkles" style="width: 1rem; height: 1rem;"></i>
+                                    履歷亮點
+                                </div>
+                                <div class="scrollable-content" style="white-space: pre-wrap;">${resume.key_highlights}</div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <i data-lucide="briefcase" style="width: 1rem; height: 1rem;"></i>
+                                    工作經歷
+                                </div>
+                                <div class="scrollable-content" style="white-space: pre-wrap;">${resume.work_experience}</div>
+                            </div>
+
+                            <div class="detail-section">
+                                <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <i data-lucide="code-2" style="width: 1rem; height: 1rem;"></i>
+                                    資訊類相關專長
+                                </div>
+                                <div class="scrollable-content" style="white-space: pre-wrap;">${resume.tech_skills}</div>
+                            </div>
+
+                            <div class="detail-section" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                                <div class="detail-label" style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <i data-lucide="book-open" style="width: 1rem; height: 1rem;"></i>
+                                    自傳
+                                </div>
+                                <div class="scrollable-content" style="white-space: pre-wrap;">${resume.autobiography || '無自傳摘要'}</div>
+                            </div>
+                        </div>
+                    </div> <!-- End of Tab 2: tab-resume -->
+                </div>
+            `;
+
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                drawer.classList.add('open');
+            }, 10);
+
+            // 重新初始化面板內的圖標 (如果是使用 lucide)
+            lucide.createIcons();
+
+            // 開啟時自動捲動到最上方
+            content.scrollTop = 0;
+        }
+
+        function toggleMaximize() {
+            const drawer = document.getElementById('detailDrawer');
+            const btn = document.getElementById('maximizeBtn');
+            const icon = btn.querySelector('i');
+
+            drawer.classList.toggle('maximized');
+
+            if (drawer.classList.contains('maximized')) {
+                icon.setAttribute('data-lucide', 'minimize-2');
+            } else {
+                icon.setAttribute('data-lucide', 'maximize-2');
+            }
+            lucide.createIcons();
+        }
+
+        function closeDrawer() {
+            const overlay = document.getElementById('drawerOverlay');
+            const drawer = document.getElementById('detailDrawer');
+
+            drawer.classList.remove('open');
+            drawer.classList.remove('maximized'); // 關閉時恢復原狀
+
+            // 恢復圖標為放大
+            const icon = document.querySelector('#maximizeBtn i');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'maximize-2');
+                lucide.createIcons();
+            }
+
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+
+        // --- Viewed History Optimization ---
+        async function markAsViewed(code) {
+            // 單筆點擊一律設為「已儲存」
+            updateStatusLabel(code, '已儲存');
+
+            try {
+                await fetch('/mark_viewed', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: [code], status: '已儲存' })
+                });
+            } catch (error) {
+                console.error('Mark as viewed failed:', error);
+            }
+        }
+
+        async function bulkMarkAsViewed(isViewed = true) {
+            const statusStr = isViewed ? '已儲存' : '未儲存';
+            const codes = Array.from(selectedResumeIds);
+
+            if (codes.length === 0) {
+                showStatusMessage('請先選取履歷！', '#dc2626');
+                return;
+            }
+
+            // 直接執行，不再跳出確認框
+            codes.forEach(code => updateStatusLabel(code, statusStr));
+
+            try {
+                const res = await fetch('/mark_viewed', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: codes, status: statusStr })
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    let displayStatus = statusStr;
+                    if (isViewed) {
+                        const today = new Date();
+                        const yyyy = today.getFullYear();
+                        const mm = String(today.getMonth() + 1).padStart(2, '0');
+                        const dd = String(today.getDate()).padStart(2, '0');
+                        displayStatus = `${yyyy}${mm}${dd}`;
+                    }
+                    showStatusMessage(`成功標記 ${codes.length} 筆為「${displayStatus}」`, '#059669');
+                    // 同步更新當前頁面 UI
+                    codes.forEach(code => updateStatusLabel(code, statusStr));
+                    clearAll();
+                }
+            } catch (error) {
+                showStatusMessage('資料庫同步失敗，請稍後再試', '#dc2626');
+            }
+        }
+
+        async function bulkMarkAsRead(isRead = true) {
+            const codes = Array.from(selectedResumeIds);
+
+            if (codes.length === 0) {
+                showStatusMessage('請先選取履歷！', '#dc2626');
+                return;
+            }
+
+            const statusVal = isRead ? 1 : 0;
+
+            try {
+                // 為了解決多筆更新，我們迴圈發送或修改 API
+                const promises = codes.map(code =>
+                    fetch('/mark_read', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: code, status: statusVal })
+                    })
+                );
+
+                await Promise.all(promises);
+
+                // 更新 UI
+                codes.forEach(code => {
+                    const cb = document.querySelector(`input[value="${code}"]`);
+                    if (cb) {
+                        const row = cb.closest('tr');
+                        if (row) {
+                            if (isRead) row.classList.add('is-read');
+                            else row.classList.remove('is-read');
+                        }
+                    }
+                });
+
+                showStatusMessage(`成功標記 ${codes.length} 筆為「${isRead ? '已讀' : '未讀'}」`, '#059669');
+                clearAll();
+
+            } catch (error) {
+                showStatusMessage('更新失敗，請稍後再試', '#dc2626');
+            }
+        }
+
+        function showStatusMessage(text, color) {
+            const msgSpan = document.getElementById('statusMessage');
+            if (!msgSpan) return;
+
+            msgSpan.textContent = text;
+            msgSpan.style.color = color;
+            msgSpan.style.opacity = '1';
+
+            // 3秒後自動消失
+            setTimeout(() => {
+                msgSpan.style.opacity = '0';
+            }, 3000);
+        }
+
+        function updateStatusLabel(code, statusName) {
+            const label = document.getElementById(`status-${code}`);
+            if (label) {
+                // 如果是已儲存，則改為顯示當天年月日
+                if (statusName === '已儲存') {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    statusName = `${yyyy}${mm}${dd}`;
+                }
+
+                label.textContent = statusName;
+                const row = label.closest('tr');
+
+                if (statusName !== '未儲存') {
+                    label.classList.add('viewed');
+                    if (row) row.classList.add('is-viewed');
+                } else {
+                    label.classList.remove('viewed');
+                    if (row) row.classList.remove('is-viewed');
+                }
+            }
+        }
+
+        function initViewedStatus() {
+            // 這裡不再需要從 localStorage 載入，Jinja2 已在初始渲染時帶入狀態
+            console.log("Status synced from database.");
+        }
+
+        function clearViewedHistory() {
+            // 註解：如果需要清空資料庫中的已查閱標籤，可以另外實作 API
+            alert('為了資料完整性，不提供清空資料庫標籤功能。如需重設，請聯繫工程師調整資料庫欄位。');
+        }
+
+        async function toggleTableInvite(code, checkbox) {
+            const isChecked = checkbox.checked;
+            const nextStatus = isChecked ? '是' : '否';
+
+            try {
+                const response = await fetch('/mark_invited', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: code, status: nextStatus })
+                });
+                
+                if (response.ok) {
+                    // 同步更新行資料的 attributes，避免打開 Drawer 顯示舊資料
+                    const row = checkbox.closest('tr');
+                    if (row) {
+                        const resume = JSON.parse(row.getAttribute('data-resume'));
+                        resume.interview_state = nextStatus;
+                        row.setAttribute('data-resume', JSON.stringify(resume));
+                    }
+                } else {
+                    // API 失敗則復原 UI
+                    checkbox.checked = !isChecked;
+                    console.error('API Error updating invite status');
+                }
+            } catch (error) {
+                checkbox.checked = !isChecked;
+                console.error('Toggle invite failed:', error);
+            }
+        }
+
+        // 初始化滑桿背景與已查閱狀態
+        window.onload = function () {
+            handleRangeInput();
+            initViewedStatus();
+        };
+
+        console.log("Dashboard loaded with {{ resumes|length }} resumes.");
+    </script>
+</body>
+
+</html>
