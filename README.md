@@ -4,9 +4,6 @@ This project automates the process of reading PDF resumes, extracting structured
 The motivation for this project came from the repetitive and time-consuming nature of resume screening. When the number of resumes increases, HR needs to read each resume, organize candidate information, and compare it with job requirements.
 
 Therefore, I built this project to use AI to analyze resume content, structure key information such as education, experience, skills, and job match, and provide a web interface for filtering and management. The goal is to make initial resume screening more efficient and candidate comparison easier.
-## Preview Screen
-![Screenshot](images/home_screenshot_1_chinese.png)
-![Screenshot](images/home_screenshot_2_chinese.png)
 ## Built With
 This project is built with the following technologies:
 - **Backend**: 
