@@ -28,9 +28,9 @@ This project is built with the following technologies:
   - **config.ini**: Used to manage API key, model name, PDF folder path, database file path, and job description file path.
   - **JD.json**: Stores the job description, required skills, professional knowledge, personality traits, and experience requirements used for candidate matching.
 ## System Architecture
-![System Architecture Diagram](./screenshots/system_architecture_diagram.png)
+![Screenshot](images/system_architecture_diagram.png)
 ## Workflow
-![Workflow Diagram](./screenshots/system_architecture_diagram.png)
+![Screenshot](images/system_architecture_diagram.png)
 ## Screenshots
 - Resume Dashboard & Filter and Search Area
 ![Screenshot](images/home_screenshot_1_chinese.png)
