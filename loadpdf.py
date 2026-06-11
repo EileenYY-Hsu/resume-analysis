@@ -17,7 +17,7 @@ def loadpdf():
     讀取本機 .pdf 檔案，並回傳符合結構的履歷清單。
     """
     config = configparser.ConfigParser()
-    config.read('config.ini', encoding='utf-8')
+    config.read('config_run.ini', encoding='utf-8')
 
     pdf_folder = config.get('FOLDERS', 'pdf_folder', fallback='pdf_resumes').strip()
 

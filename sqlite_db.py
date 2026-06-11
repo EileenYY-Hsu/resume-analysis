@@ -3,9 +3,9 @@ from datetime import datetime
 import configparser
 import os
 
-# 讀取 config.ini 中的 SQLite 檔案路徑
+# 讀取 config_run.ini 中的 SQLite 檔案路徑
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+config.read('config_run.ini', encoding='utf-8')
 
 DB_FILE = config.get('DATABASE', 'db_file', fallback='resume.db').strip()
 if not os.path.isabs(DB_FILE):

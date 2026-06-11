@@ -13,7 +13,8 @@ ENV/
 *.sqlite3
 
 # Configurations containing sensitive keys
-config.ini
+config_run.ini
+config_*.ini
 .env
 
 # PDF Resumes (avoid uploading personal/sensitive data)

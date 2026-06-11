@@ -2,7 +2,7 @@ import configparser
 from openai import OpenAI
 
 class GPTAnalyzer:
-    def __init__(self, config_file='config.ini', prompt_file='prompts.md'):
+    def __init__(self, config_file='config_run.ini', prompt_file='prompts.md'):
         self.config = configparser.ConfigParser()
         self.config.read(config_file, encoding='utf-8')
         

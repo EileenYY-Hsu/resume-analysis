@@ -146,7 +146,7 @@ sqlite_db.init_db()
 
 # 讀取系統設定檔
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+config.read('config_run.ini', encoding='utf-8')
 
 # 載入 PDF 履歷並取得資料庫內既有的履歷代碼 (避免重複處理)
 existing_codes = sqlite_db.get_existing_codes()
