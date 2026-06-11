@@ -4,6 +4,10 @@ This project automates the process of reading PDF resumes, extracting structured
 The motivation for this project came from the repetitive and time-consuming nature of resume screening. When the number of resumes increases, HR needs to read each resume, organize candidate information, and compare it with job requirements.
 
 Therefore, I built this project to use AI to analyze resume content, structure key information such as education, experience, skills, and job match, and provide a web interface for filtering and management. The goal is to make initial resume screening more efficient and candidate comparison easier.
+## Data Notice
+The PDF resumes used in this project are AI-generated mock resumes created only for development, testing, and demonstration purposes. They do not contain real personal information and are not associated with any real individuals.
+
+This project focuses on demonstrating the workflow of resume analysis, structured data extraction, candidate-job matching, and dashboard management.
 ## Built With
 This project is built with the following technologies:
 - **Backend**: 
@@ -23,6 +27,10 @@ This project is built with the following technologies:
 - **Configuration & Data**:
   - **config.ini**: Used to manage API key, model name, PDF folder path, database file path, and job description file path.
   - **JD.json**: Stores the job description, required skills, professional knowledge, personality traits, and experience requirements used for candidate matching.
+## System Architecture
+![System Architecture Diagram](./screenshots/system_architecture_diagram.png)
+## Workflow
+![Workflow Diagram](./screenshots/system_architecture_diagram.png)
 ## Screenshots
 - Resume Dashboard & Filter and Search Area
 ![Screenshot](images/home_screenshot_1_chinese.png)
