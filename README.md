@@ -42,7 +42,7 @@ This project is built with the following technologies:
 - **Privacy-Aware Processing**:
 Before sending resume text to the AI model, the system includes a privacy filtering step. Sensitive information such as names, email addresses, and phone numbers can be masked during processing.
 
-This design helps reduce exposure of personal data when performing AI-based resume analysis.
+  This design helps reduce exposure of personal data when performing AI-based resume analysis.
 - **Web-Based Dashboard**:
 The Flask web interface provides a resume management dashboard. Users can browse all analyzed resumes in a table, view essential candidate information, and interact with candidate records directly from the browser.
 ## Reflection
