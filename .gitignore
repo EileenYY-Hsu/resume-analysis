@@ -10,8 +10,6 @@ env/
 ENV/
 
 # Databases
-resume.db
-*.db
 *.sqlite3
 
 # Configurations containing sensitive keys
@@ -19,5 +17,4 @@ config.ini
 .env
 
 # PDF Resumes (avoid uploading personal/sensitive data)
-pdf_resumes/
 output/
